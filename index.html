@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Life Game</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main class="app" aria-label="Conway Life Game">
+    <section class="topbar">
+      <div>
+        <h1>Life Game</h1>
+        <p>100x100 플랫폼에서 세포가 입체 블록처럼 살아납니다.</p>
+      </div>
+      <div class="stats" aria-live="polite">
+        <span>Generation <strong id="generation">0</strong></span>
+        <span>Alive <strong id="aliveCount">0</strong></span>
+      </div>
+    </section>
+
+    <section class="board-wrap">
+      <canvas id="board" width="900" height="900" aria-label="life game board"></canvas>
+      <div class="cursor-readout" id="cursorReadout">X: -- Y: --</div>
+    </section>
+
+    <section class="controls" aria-label="game controls">
+      <button id="playPause" class="primary" type="button">Start</button>
+      <button id="step" type="button">Step</button>
+      <button id="clear" type="button">Clear</button>
+      <button id="random" type="button">Random</button>
+      <button id="glider" type="button">Glider</button>
+      <label class="speed-control">
+        <span>Speed</span>
+        <input id="speed" type="range" min="2" max="30" value="10">
+      </label>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>

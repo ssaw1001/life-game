@@ -79,6 +79,8 @@ p {
 
 .board-wrap {
   position: relative;
+  display: grid;
+  justify-items: center;
   padding: 12px;
   border: 1px solid var(--line);
   background: rgba(24, 27, 31, 0.92);
@@ -185,6 +187,10 @@ input[type="range"] {
 
   .controls {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  canvas {
+    width: min(78vw, 56vh, 620px);
   }
 
   .speed-control {

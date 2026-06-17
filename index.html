@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Life Game</title>
-  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./style.css?v=3">
 </head>
 <body>
   <main class="app" aria-label="Conway Life Game">
@@ -14,6 +14,7 @@
         <p id="boardDescription">100x100 플랫폼에서 세포가 입체 블록처럼 살아납니다.</p>
       </div>
       <div class="stats" aria-live="polite">
+        <span>Board <strong id="boardSizeLabel">100x100</strong></span>
         <span>Generation <strong id="generation">0</strong></span>
         <span>Alive <strong id="aliveCount">0</strong></span>
       </div>
@@ -37,6 +38,6 @@
     </section>
   </main>
 
-  <script src="./app.js"></script>
+  <script src="./app.js?v=3"></script>
 </body>
 </html>

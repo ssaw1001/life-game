@@ -5,6 +5,7 @@ const MOBILE_QUERY = "(max-width: 760px), (pointer: coarse)";
 const canvas = document.querySelector("#board");
 const ctx = canvas.getContext("2d");
 const boardDescriptionEl = document.querySelector("#boardDescription");
+const boardSizeLabelEl = document.querySelector("#boardSizeLabel");
 const generationEl = document.querySelector("#generation");
 const aliveCountEl = document.querySelector("#aliveCount");
 const cursorReadout = document.querySelector("#cursorReadout");
@@ -98,6 +99,7 @@ function draw() {
 
   generationEl.textContent = generation;
   aliveCountEl.textContent = alive;
+  boardSizeLabelEl.textContent = `${boardSize}x${boardSize}`;
   boardDescriptionEl.textContent = `${boardSize}x${boardSize} 플랫폼에서 세포가 입체 블록처럼 살아납니다.`;
 }
 

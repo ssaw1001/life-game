@@ -1,8 +1,10 @@
-const ROWS = 100;
-const COLS = 100;
+const DESKTOP_SIZE = 100;
+const MOBILE_SIZE = 50;
+const MOBILE_QUERY = "(max-width: 760px), (pointer: coarse)";
 
 const canvas = document.querySelector("#board");
 const ctx = canvas.getContext("2d");
+const boardDescriptionEl = document.querySelector("#boardDescription");
 const generationEl = document.querySelector("#generation");
 const aliveCountEl = document.querySelector("#aliveCount");
 const cursorReadout = document.querySelector("#cursorReadout");
@@ -13,6 +15,7 @@ const randomButton = document.querySelector("#random");
 const gliderButton = document.querySelector("#glider");
 const speedInput = document.querySelector("#speed");
 
+let boardSize = getBoardSize();
 let grid = createGrid();
 let generation = 0;
 let running = false;
@@ -20,16 +23,20 @@ let lastTick = 0;
 let drawMode = true;
 let pointerDown = false;
 
+function getBoardSize() {
+  return window.matchMedia(MOBILE_QUERY).matches ? MOBILE_SIZE : DESKTOP_SIZE;
+}
+
 function createGrid() {
-  return Array.from({ length: ROWS }, () => Array(COLS).fill(false));
+  return Array.from({ length: boardSize }, () => Array(boardSize).fill(false));
 }
 
 function countNeighbors(row, col, source = grid) {
   let count = 0;
   const rowStart = Math.max(0, row - 1);
-  const rowEnd = Math.min(ROWS - 1, row + 1);
+  const rowEnd = Math.min(boardSize - 1, row + 1);
   const colStart = Math.max(0, col - 1);
-  const colEnd = Math.min(COLS - 1, col + 1);
+  const colEnd = Math.min(boardSize - 1, col + 1);
 
   for (let y = rowStart; y <= rowEnd; y += 1) {
     for (let x = colStart; x <= colEnd; x += 1) {
@@ -43,8 +50,8 @@ function countNeighbors(row, col, source = grid) {
 function stepGeneration() {
   const next = createGrid();
 
-  for (let row = 0; row < ROWS; row += 1) {
-    for (let col = 0; col < COLS; col += 1) {
+  for (let row = 0; row < boardSize; row += 1) {
+    for (let col = 0; col < boardSize; col += 1) {
       const neighbors = countNeighbors(row, col);
       next[row][col] = neighbors === 3 || (grid[row][col] && neighbors === 2);
     }
@@ -56,8 +63,8 @@ function stepGeneration() {
 }
 
 function draw() {
-  const cellW = canvas.width / COLS;
-  const cellH = canvas.height / ROWS;
+  const cellW = canvas.width / boardSize;
+  const cellH = canvas.height / boardSize;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "#090b0d";
@@ -65,14 +72,14 @@ function draw() {
 
   ctx.strokeStyle = "rgba(255,255,255,0.025)";
   ctx.lineWidth = 1;
-  for (let col = 0; col <= COLS; col += 1) {
+  for (let col = 0; col <= boardSize; col += 1) {
     const x = Math.round(col * cellW) + 0.5;
     ctx.beginPath();
     ctx.moveTo(x, 0);
     ctx.lineTo(x, canvas.height);
     ctx.stroke();
   }
-  for (let row = 0; row <= ROWS; row += 1) {
+  for (let row = 0; row <= boardSize; row += 1) {
     const y = Math.round(row * cellH) + 0.5;
     ctx.beginPath();
     ctx.moveTo(0, y);
@@ -81,8 +88,8 @@ function draw() {
   }
 
   let alive = 0;
-  for (let row = 0; row < ROWS; row += 1) {
-    for (let col = 0; col < COLS; col += 1) {
+  for (let row = 0; row < boardSize; row += 1) {
+    for (let col = 0; col < boardSize; col += 1) {
       if (!grid[row][col]) continue;
       alive += 1;
       drawCell(col * cellW, row * cellH, cellW, cellH);
@@ -91,6 +98,7 @@ function draw() {
 
   generationEl.textContent = generation;
   aliveCountEl.textContent = alive;
+  boardDescriptionEl.textContent = `${boardSize}x${boardSize} 플랫폼에서 세포가 입체 블록처럼 살아납니다.`;
 }
 
 function drawCell(x, y, width, height) {
@@ -149,11 +157,11 @@ function drawCell(x, y, width, height) {
 
 function canvasCellFromEvent(event) {
   const rect = canvas.getBoundingClientRect();
-  const x = Math.floor(((event.clientX - rect.left) / rect.width) * COLS);
-  const y = Math.floor(((event.clientY - rect.top) / rect.height) * ROWS);
+  const x = Math.floor(((event.clientX - rect.left) / rect.width) * boardSize);
+  const y = Math.floor(((event.clientY - rect.top) / rect.height) * boardSize);
   return {
-    col: Math.max(0, Math.min(COLS - 1, x)),
-    row: Math.max(0, Math.min(ROWS - 1, y)),
+    col: Math.max(0, Math.min(boardSize - 1, x)),
+    row: Math.max(0, Math.min(boardSize - 1, y)),
   };
 }
 
@@ -198,6 +206,13 @@ function addGlider() {
     grid[startRow + row][startCol + col] = true;
   });
   draw();
+}
+
+function syncBoardSize() {
+  const nextSize = getBoardSize();
+  if (nextSize === boardSize) return;
+  boardSize = nextSize;
+  clearBoard();
 }
 
 function loop(now) {
@@ -247,6 +262,8 @@ window.addEventListener("keydown", (event) => {
   if (event.key.toLowerCase() === "r") randomize();
   if (event.key === "Enter") stepGeneration();
 });
+
+window.matchMedia(MOBILE_QUERY).addEventListener("change", syncBoardSize);
 
 draw();
 requestAnimationFrame(loop);
